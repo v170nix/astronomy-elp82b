@@ -260,7 +260,7 @@ abstract public class MoonElp82b {
 
     static List<Double> prepareLambdaArray(int maxLambdaFactor[],
                                            double lambda[]) {
-        List<Double> result = new ArrayList<>(203 * 4);
+        List<Double> result = new ArrayList<Double>(203 * 4);
         /* initialize result:
            (cos,sin)(1*lambda[0]),(cos,sin)(-1*lambda[0]),(cos,sin)(2*lambda[0]),...
            (cos,sin)(1*lambda[1]),(cos,sin)(-1*lambda[1]),(cos,sin)(2*lambda[1]),...

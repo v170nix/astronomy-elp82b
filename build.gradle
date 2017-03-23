@@ -1,3 +1,9 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
 group 'net.arwix.astronomy.elp82b'
 version '0.1'
 
@@ -10,6 +16,34 @@ repositories {
     jcenter()
     maven {
         url  "http://dl.bintray.com/v170nix/astronomy"
+    }
+}
+
+bintray {
+    user = 'v170nix'
+    key =  project.property('bintrayApiKey')
+    pkg {
+        repo = 'astronomy'
+        name = 'astronomy-lib-elp82b'
+        userOrg = user
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/v170nix/astronomy-lib-core.git'
+
+        version {
+            name = project.version
+        }
+        publications = ['MyPublication']
+    }
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId 'net.arwix.astronomy'
+            artifactId 'astronomy-elp82b'
+            version project.version
+        }
     }
 }
 
