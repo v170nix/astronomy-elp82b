@@ -29,9 +29,9 @@ public class MoonElp82bTest {
         double au = 149597870.700;
         double t = (2469000.5 - 2451545.0) / 36525.0;
 //        System.out.println(t);
-        RectangularVector cR = (RectangularVector) MoonElp82b.getCoor(t).getVectorOfType(VectorType.RECTANGULAR);
+        RectangularVector cR = (RectangularVector) MoonElp82b.getCoordinates(t).getVectorOfType(VectorType.RECTANGULAR);
         System.out.println(Arrays.toString(cR.toArray()));
-        RectangularVector vectorR = (RectangularVector) MoonElp82b.getElp82bCoor(t).getVectorOfType(VectorType.RECTANGULAR);
+        RectangularVector vectorR = (RectangularVector) MoonElp82b.getElp82bCoordinates(t).getVectorOfType(VectorType.RECTANGULAR);
         System.out.println(Arrays.toString(vectorR.toArray()));
         assertEquals("2469000.5 xE2000", -361602.98537, vectorR.x * au , 1e-5);
         assertEquals("2469000.5 yE2000", 44996.9951, vectorR.y * au , 1e-5);
@@ -51,11 +51,11 @@ public class MoonElp82bTest {
     //    Matrix var10000 = Matrix.Companion.transpose(Matrix.Companion.invoke(Matrix.Axis.X, eps));
 
 
-        Vector vector = MoonElp82b.getElp82bCoor(t);
+        Vector vector = MoonElp82b.getElp82bCoordinates(t);
         double dT = vector.normalize() / Constants.C_Light / 36525.0;
         System.out.println(dT * 36525.0 * 24.0 * 60.0 );
         double innerT = t - dT;
-        vector = MoonElp82b.getElp82bCoor(innerT);
+        vector = MoonElp82b.getElp82bCoordinates(innerT);
    //    SphericalVector eclVector = (SphericalVector) vector.getVectorOfType(VectorType.SPHERICAL);
 
    //     System.out.println(eclVector.r * au);

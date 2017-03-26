@@ -1,9 +1,12 @@
 package net.arwix.astronomy.elp82b;
 
 
+import net.arwix.astronomy.core.Epoch;
+import net.arwix.astronomy.core.coordinates.EclipticCoordinates;
 import net.arwix.astronomy.core.vector.RectangularVector;
 import net.arwix.astronomy.core.vector.Vector;
 import net.arwix.astronomy.core.vector.VectorType;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,7 +16,7 @@ import java.util.StringTokenizer;
 
 import static java.lang.Math.*;
 
-abstract public class MoonElp82b {
+abstract class MoonElp82b{
 
     private static
     final int[] elp82b_max_lambda_factor = {
@@ -94,12 +97,11 @@ abstract public class MoonElp82b {
                     }
                 }
             }
-      //      saveToFile("elp82b_inst", elp82b_instructions);
+            //      saveToFile("elp82b_inst", elp82b_instructions);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 
     /* Delaunay's arguments */
@@ -165,8 +167,8 @@ abstract public class MoonElp82b {
     private static final double q4 = -1.371808e-12;
     private static final double q5 = -3.20334e-15;
 
-    static public Vector getElp82bCoor(double t) {
-        RectangularVector vector = (RectangularVector) getCoor(t).getVectorOfType(VectorType.RECTANGULAR);
+    static Vector getElp82bCoordinates(double t) {
+        RectangularVector vector = (RectangularVector) getCoordinates(t).getVectorOfType(VectorType.RECTANGULAR);
 //        final double rh = vector.z * cos(vector.y);
 //        final double x3 = vector.z * sin(vector.y);
 //        final double x1 = rh * cos(vector.x);
@@ -188,8 +190,8 @@ abstract public class MoonElp82b {
                 -pw * vector.x + qw * vector.y + (pw2 + qw2 - 1.0) * vector.z);
     }
 
-    static public Vector getCoor(double t) {
-    //    final double t = (jd - 2451545.0) / 36525.0;
+    static Vector getCoordinates(double t) {
+        //    final double t = (jd - 2451545.0) / 36525.0;
         double[] lambda = new double[17];
         int i, k;
         for (i = 0; i < 4; i++) {
@@ -215,47 +217,12 @@ abstract public class MoonElp82b {
         final double r2 = (accu[1] + t * (accu[4] + t * accu[7])) * (PI / (180.0 * 3600.0));
         final double r3 = (accu[2] + t * (accu[5] + t * accu[8])) * a0_div_ath_times_au;
 
-                final double rh = r3 * cos(r2);
+        final double rh = r3 * cos(r2);
         final double x3 = r3 * sin(r2);
         final double x1 = rh * cos(r1);
         final double x2 = rh * sin(r1);
 
         return new RectangularVector(x1, x2, x3);
-
-//        final double rh = r3 * cos(r2);
-//        final double x3 = r3 * sin(r2);
-//        final double x1 = rh * cos(r1);
-//        final double x2 = rh * sin(r1);
-//
-//        double pw = t * (p1 + t * (p2 + t * (p3 + t * (p4 + t * p5))));
-//        double qw = t * (q1 + t * (q2 + t * (q3 + t * (q4 + t * q5))));
-//        final double pwq = pw * pw;
-//        final double qwq = qw * qw;
-//        final double pwqw = 2.0 * pw * qw;
-//        final double pw2 = 1.0 - 2.0 * pwq;
-//        final double qw2 = 1.0 - 2.0 * qwq;
-//        final double ra = 2.0 * sqrt(1.0 - pwq - qwq);
-//        pw *= ra;
-//        qw *= ra;
-//
-//        // VSOP87 coordinates:
-//
-//        // VSOP87 coordinates:
-//        double x = pw2 * x1 + pwqw * x2 + pw * x3;
-//        double y = pwqw * x1 + qw2 * x2 - qw * x3;
-//        double z = -pw * x1 + qw * x2 + (pw2 + qw2 - 1.0) * x3;
-//
-////        System.out.println(x * 149597870.7000);
-////        System.out.println(y * 149597870.7000);
-////        System.out.println(z * 149597870.7000);
-//
-//        return new RectangularVector(
-//                pw2 * x1 + pwqw * x2 + pw * x3,
-//                pwqw * x1 + qw2 * x2 - qw * x3,
-//                -pw * x1 + qw * x2 + (pw2 + qw2 - 1.0) * x3);
-
-//        printf("Moon: %f  %22.15f %22.15f %22.15f\n",
-//               jd,xyz[0],xyz[1],xyz[2]);
     }
 
     static List<Double> prepareLambdaArray(int maxLambdaFactor[],
@@ -306,7 +273,6 @@ abstract public class MoonElp82b {
     }
 
 
-
     static class IndexHolder {
         int spIdx = 0;
         int lambdaIndex = 0;
@@ -331,20 +297,20 @@ abstract public class MoonElp82b {
         IndexHolder idx = new IndexHolder();
         sp[0] = 1.0;
         sp[1] = 0.0;
-            for (; ;) {
-                idx.termCount = instructionsIterator.next();
-                if (idx.termCount < 0xFE) {
-                    idx.lambdaIndex = ((idx.termCount & 15) << 8) | (instructionsIterator.next());
-                    idx.termCount >>= 4;
-                    calculateNewArg(cosSinLambda, accu, sp,
-                            instructionsIterator, coefficientsIterator,
-                            idx);
-                } else {
-                    if (idx.termCount == 0xFF) break;
+        for (; ; ) {
+            idx.termCount = instructionsIterator.next();
+            if (idx.termCount < 0xFE) {
+                idx.lambdaIndex = ((idx.termCount & 15) << 8) | (instructionsIterator.next());
+                idx.termCount >>= 4;
+                calculateNewArg(cosSinLambda, accu, sp,
+                        instructionsIterator, coefficientsIterator,
+                        idx);
+            } else {
+                if (idx.termCount == 0xFF) break;
                     /* pop argument from the stack */
-                    idx.spIdx -= 2;
-                }
+                idx.spIdx -= 2;
             }
+        }
     }
 
     private static void calculateNewArg(List<Double> cosSinLambda,
