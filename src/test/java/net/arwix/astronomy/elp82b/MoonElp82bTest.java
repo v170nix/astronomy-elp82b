@@ -4,6 +4,7 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import net.arwix.astronomy.core.AstronomyMatrix;
 import net.arwix.astronomy.core.Constants;
 import net.arwix.astronomy.core.calendar.CalendarExtensions;
+import net.arwix.astronomy.core.kepler.KeplerianOrbit;
 import net.arwix.astronomy.core.vector.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +30,8 @@ public class MoonElp82bTest {
         double au = 149597870.700;
         double t = (2469000.5 - 2451545.0) / 36525.0;
 //        System.out.println(t);
-        RectangularVector cR = (RectangularVector) MoonElp82b.getCoordinates(t).getVectorOfType(VectorType.RECTANGULAR);
-        System.out.println(Arrays.toString(cR.toArray()));
+//        RectangularVector cR = (RectangularVector) MoonElp82b.getCoordinates(t).getVectorOfType(VectorType.RECTANGULAR);
+//        System.out.println(Arrays.toString(cR.toArray()));
         RectangularVector vectorR = (RectangularVector) MoonElp82b.getElp82bCoordinates(t).getVectorOfType(VectorType.RECTANGULAR);
         System.out.println(Arrays.toString(vectorR.toArray()));
         assertEquals("2469000.5 xE2000", -361602.98537, vectorR.x * au , 1e-5);
@@ -39,6 +40,7 @@ public class MoonElp82bTest {
 
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.set(2047, Calendar.OCTOBER, 17, 0,0,-22);
+  //      calendar.set(1989, Calendar.JANUARY, 1, 0,0,0);
         t = CalendarExtensions.getJT(calendar, true);
         System.out.println("TDB-UT " + CalendarExtensions.getDeltaT(calendar, TimeUnit.SECONDS));
 //        System.out.println(CalendarExtensions.getMJD(calendar));
@@ -67,12 +69,32 @@ public class MoonElp82bTest {
         double k = calendar.get(Calendar.YEAR) - 1988.0;
         double tdb = 56.059 + 0.2822 * k + 0.02223 * k * k;
         System.out.println("ydb" + tdb);
+
+
+
         SphericalVector equ = (SphericalVector)
-
-           //     AstronomyMatrix.INSTANCE.createPrecession(0, t, AstronomyMatrix.Coordinates.ECLIPTIC).times(
-
+//                AstronomyMatrix.INSTANCE.createTransformationCoordinates(t, AstronomyMatrix.Coordinates.ECLIPTIC, AstronomyMatrix.Coordinates.EQUATORIAL)
+//                        .times(vector).getVectorOfType(VectorType.SPHERICAL);
+//
                 AstronomyMatrix.INSTANCE.createTransformationCoordinates(0, AstronomyMatrix.Coordinates.ECLIPTIC, AstronomyMatrix.Coordinates.EQUATORIAL)
                         .times(vector).getVectorOfType(VectorType.SPHERICAL);
+//
+
+//        Matrix PN = AstronomyMatrix.INSTANCE.createNutation(innerT).times(AstronomyMatrix.INSTANCE.createPrecession(0, innerT, AstronomyMatrix.Coordinates.EQUATORIAL));
+
+
+//        equ = (SphericalVector) AstronomyMatrix.INSTANCE.createPrecession(0, innerT, AstronomyMatrix.Coordinates.EQUATORIAL).times(equ).getVectorOfType(VectorType.SPHERICAL);
+//
+//        equ = (SphericalVector) AstronomyMatrix.INSTANCE.createNutation(innerT).times(equ).getVectorOfType(VectorType.SPHERICAL);
+
+//        equ = (SphericalVector) PN.times(equ).getVectorOfType(VectorType.SPHERICAL);
+//        Matrix Ecl2Equ = AstronomyMatrix.INSTANCE.createTransformationCoordinates(t, AstronomyMatrix.Coordinates.ECLIPTIC, AstronomyMatrix.Coordinates.EQUATORIAL);
+//        Vector ev = KeplerianOrbit.Planet.EARTH.getOrbitalPlane(t).component2().div(Constants.C_Light);
+//        Vector ve = Ecl2Equ.times(ev);
+//        equ = (SphericalVector) equ.plus(ve).getVectorOfType(VectorType.SPHERICAL);
+//        equ = (SphericalVector) equ.div(equ.normalize()).getVectorOfType(VectorType.SPHERICAL);
+
+
         System.out.println(equ.r);
         System.out.println(printLong(equ));
         System.out.println(printLat(equ));
