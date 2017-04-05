@@ -1,12 +1,9 @@
 package net.arwix.astronomy.elp82b;
 
 
-import net.arwix.astronomy.core.Epoch;
-import net.arwix.astronomy.core.coordinates.EclipticCoordinates;
 import net.arwix.astronomy.core.vector.RectangularVector;
 import net.arwix.astronomy.core.vector.Vector;
 import net.arwix.astronomy.core.vector.VectorType;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,7 +13,7 @@ import java.util.StringTokenizer;
 
 import static java.lang.Math.*;
 
-abstract class MoonElp82b{
+public abstract class MoonElp82b{
 
     private static
     final int[] elp82b_max_lambda_factor = {
@@ -167,7 +164,7 @@ abstract class MoonElp82b{
     private static final double q4 = -1.371808e-12;
     private static final double q5 = -3.20334e-15;
 
-    static Vector getElp82bCoordinates(double t) {
+    public static Vector getElp82bCoordinates(double t) {
         RectangularVector vector = (RectangularVector) getCoordinates(t).getVectorOfType(VectorType.RECTANGULAR);
 //        final double rh = vector.z * cos(vector.y);
 //        final double x3 = vector.z * sin(vector.y);
@@ -190,7 +187,7 @@ abstract class MoonElp82b{
                 -pw * vector.x + qw * vector.y + (pw2 + qw2 - 1.0) * vector.z);
     }
 
-    static Vector getCoordinates(double t) {
+    private static Vector getCoordinates(double t) {
         //    final double t = (jd - 2451545.0) / 36525.0;
         double[] lambda = new double[17];
         int i, k;
@@ -225,7 +222,7 @@ abstract class MoonElp82b{
         return new RectangularVector(x1, x2, x3);
     }
 
-    static List<Double> prepareLambdaArray(int maxLambdaFactor[],
+    private static List<Double> prepareLambdaArray(int maxLambdaFactor[],
                                            double lambda[]) {
         List<Double> result = new ArrayList<Double>(203 * 4);
         /* initialize result:
