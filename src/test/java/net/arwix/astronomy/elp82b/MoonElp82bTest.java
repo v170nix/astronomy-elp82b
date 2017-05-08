@@ -39,9 +39,11 @@ public class MoonElp82bTest {
         assertEquals("2469000.5 zE2000", -30696.65316, vectorR.z * au , 1e-5);
 
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        calendar.set(2047, Calendar.OCTOBER, 17, 0,0,-22);
+        calendar.set(2047, Calendar.OCTOBER, 17, 0,0,6);
   //      calendar.set(1989, Calendar.JANUARY, 1, 0,0,0);
         t = CalendarExtensions.getJT(calendar, true);
+        System.out.println(t);
+        System.out.println(CalendarExtensions.getMJD(calendar) );
         System.out.println("TDB-UT " + CalendarExtensions.getDeltaT(calendar, TimeUnit.SECONDS));
 //        System.out.println(CalendarExtensions.getMJD(calendar));
 //        vectorR = (RectangularVector) MoonElp82b.getCoor(t).getVectorOfType(VectorType.RECTANGULAR);
@@ -80,14 +82,16 @@ public class MoonElp82bTest {
                         .times(vector).getVectorOfType(VectorType.SPHERICAL);
 //
 
-//        Matrix PN = AstronomyMatrix.INSTANCE.createNutation(innerT).times(AstronomyMatrix.INSTANCE.createPrecession(0, innerT, AstronomyMatrix.Coordinates.EQUATORIAL));
+    //    Matrix PN = AstronomyMatrix.INSTANCE.createNutation(innerT).times(AstronomyMatrix.INSTANCE.createPrecession(0, innerT, AstronomyMatrix.Coordinates.EQUATORIAL));
 
 
-//        equ = (SphericalVector) AstronomyMatrix.INSTANCE.createPrecession(0, innerT, AstronomyMatrix.Coordinates.EQUATORIAL).times(equ).getVectorOfType(VectorType.SPHERICAL);
+
 //
-//        equ = (SphericalVector) AstronomyMatrix.INSTANCE.createNutation(innerT).times(equ).getVectorOfType(VectorType.SPHERICAL);
+  //     equ = (SphericalVector) AstronomyMatrix.INSTANCE.createNutation(innerT).times(equ).getVectorOfType(VectorType.SPHERICAL);
 
-//        equ = (SphericalVector) PN.times(equ).getVectorOfType(VectorType.SPHERICAL);
+  //      equ = (SphericalVector) AstronomyMatrix.INSTANCE.createPrecession(0, innerT, AstronomyMatrix.Coordinates.EQUATORIAL).times(equ).getVectorOfType(VectorType.SPHERICAL);
+
+   //     equ = (SphericalVector) PN.times(equ).getVectorOfType(VectorType.SPHERICAL);
 //        Matrix Ecl2Equ = AstronomyMatrix.INSTANCE.createTransformationCoordinates(t, AstronomyMatrix.Coordinates.ECLIPTIC, AstronomyMatrix.Coordinates.EQUATORIAL);
 //        Vector ev = KeplerianOrbit.Planet.EARTH.getOrbitalPlane(t).component2().div(Constants.C_Light);
 //        Vector ve = Ecl2Equ.times(ev);
