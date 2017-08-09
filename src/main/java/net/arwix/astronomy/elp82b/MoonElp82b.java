@@ -1,15 +1,17 @@
 package net.arwix.astronomy.elp82b;
 
 
+import kotlin.Pair;
 import net.arwix.astronomy.core.vector.RectangularVector;
 import net.arwix.astronomy.core.vector.Vector;
 import net.arwix.astronomy.core.vector.VectorType;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static java.lang.Math.*;
 
@@ -53,6 +55,21 @@ public abstract class MoonElp82b{
 
     private static final List<Short> elp82b_instructions = new ArrayList<Short>(125000);
 
+    private static class ParseDoubleCallable implements Callable<Pair<Double, Double>> {
+
+        private String data;
+
+        ParseDoubleCallable(String line) {
+            data = line;
+        }
+
+        @Override
+        public Pair<Double, Double> call() throws Exception {
+            StringTokenizer st = new StringTokenizer(data, " \t,");
+            return new Pair<>(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()));
+        }
+    }
+
     static {
         try {
             // Initializing arrays from Elp82b.data file
@@ -62,17 +79,31 @@ public abstract class MoonElp82b{
             if (!line.startsWith("elp82b_coefficients")) {
                 throw new IOException("File Elp82b.data should contain elp82b_coefficients at line " + reader.getLineNumber());
             }
+            long startTime = System.currentTimeMillis();
+//            ExecutorService service = Executors.newFixedThreadPool(4);
+//            List<Future<Pair<Double, Double>>> futures = new ArrayList<>(37514);
             while (line != null) {
                 line = reader.readLine();
                 if (line.contains("}")) {
                     break;
                 } else {
                     StringTokenizer st = new StringTokenizer(line, " \t,");
+//                    futures.add(service.submit(new ParseDoubleCallable(line)));
                     elp82b_coefficients.add(Double.parseDouble(st.nextToken()));
                     elp82b_coefficients.add(Double.parseDouble(st.nextToken()));
                 }
             }
+//            service.shutdown();
 
+//            for (Future<Pair<Double, Double>> future: futures) {
+//                 elp82b_coefficients.add(future.get().component1());
+//                 elp82b_coefficients.add(future.get().component2());
+//            }
+
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+            System.out.println("elp82b_coefficients " + (duration / 1000f));
+            startTime = System.currentTimeMillis();
             line = reader.readLine();
             if (!line.startsWith("elp82b_instructions")) {
                 throw new IOException("File Elp82b.data should contain elp82b_instructions at line " + reader.getLineNumber());
@@ -94,6 +125,9 @@ public abstract class MoonElp82b{
                     }
                 }
             }
+            endTime = System.currentTimeMillis();
+            duration = endTime - startTime;
+            System.out.println("elp82b_instructions " + (duration / 1000f));
             //      saveToFile("elp82b_inst", elp82b_instructions);
         } catch (Exception e) {
             e.printStackTrace();
