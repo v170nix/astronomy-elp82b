@@ -4,7 +4,6 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import net.arwix.astronomy.core.AstronomyMatrix;
 import net.arwix.astronomy.core.Constants;
 import net.arwix.astronomy.core.calendar.CalendarExtensions;
-import net.arwix.astronomy.core.kepler.KeplerianOrbit;
 import net.arwix.astronomy.core.vector.*;
 import org.junit.Before;
 import org.junit.Test;
